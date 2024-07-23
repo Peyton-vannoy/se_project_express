@@ -6,6 +6,11 @@ const getItems = (req, res) => {
     .then((items) => res.status(200).send({ data: items }))
     .catch((err) => {
       console.error(err);
+      if (err.name === "ValidationError") {
+        return res.status(ERROR_CODES.BAD_REQUEST).send({
+          message: ERROR_MESSAGES.BAD_REQUEST,
+        });
+      }
       return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       });
@@ -13,10 +18,16 @@ const getItems = (req, res) => {
 };
 
 const createItem = (req, res) => {
-  console.log(req.user._id);
   const { name, weather, imageUrl } = req.body;
+  const owner = req.user._id;
 
-  ClothingItem.create({ name, weather, imageUrl })
+  if (!name || !weather || !imageUrl) {
+    return res
+      .status(ERROR_CODES.BAD_REQUEST)
+      .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+  }
+
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
       console.log(err);
@@ -37,24 +48,35 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((deletedItem) =>
-      res
-        .status(200)
-        .send({ data: deletedItem, message: "Item successfully deleted" })
-    )
+    .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.NOT_FOUND });
-      }
       if (err.name === "CastError") {
         return res
           .status(ERROR_CODES.BAD_REQUEST)
           .send({ message: ERROR_MESSAGES.BAD_REQUEST });
       }
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+      }
       return res
+        .status(ERROR_CODES.INTERNAL_SERVER_ERROR)
+        .send({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
+    });
+};
+
+const updateItem = (req, res) => {
+  const { itemId } = req.params;
+  const { imageUrl } = req.body;
+
+  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
+    .orFail()
+    .then((item) => res.status(200).send({ data: item }))
+    .catch((err) => {
+      console.error(err);
+      res
         .status(ERROR_CODES.INTERNAL_SERVER_ERROR)
         .send({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     });
@@ -70,17 +92,23 @@ const likeItem = (req, res) => {
       new: true,
     }
   )
-    .then((updatedItem) => {
-      if (!updatedItem) {
-        return res.status(ERROR_CODES.NOT_FOUND).send({
-          message: ERROR_MESSAGES.NOT_FOUND,
-        });
-      }
-      return res.json({ data: updatedItem });
-    })
+    .orFail()
+    .then((item) => res.json({ data: item }))
     .catch((err) => {
-      return res.status(ERROR_CODES.BAD_REQUEST).send({
-        message: ERROR_MESSAGES.BAD_REQUEST,
+      console.error(err);
+
+      if (err.name === "CastError") {
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+      }
+      res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
+        message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       });
     });
 };
@@ -95,26 +123,34 @@ const dislikeItem = (req, res) => {
       new: true,
     }
   )
-    .orFail(new Error(ERROR_MESSAGES.bad))
-    .then((updatedItem) => res.status(200).send({ data: updatedItem }))
+    .orFail()
+    .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
-      console.error(err);
-
-      if (err.message === ERROR_MESSAGES.NOT_FOUND) {
-        return res.status(ERROR_CODES.NOT_FOUND).send({
-          message: ERROR_MESSAGES.NOT_FOUND,
-        });
-      }
+      console.log(err.name);
 
       if (err.name === "CastError") {
-        return res.status(ERROR_CODES.BAD_REQUEST).send({
-          message: ERROR_MESSAGES.BAD_REQUEST,
-        });
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
       }
-      return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
+
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+      }
+
+      res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       });
     });
 };
 
-module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };
+module.exports = {
+  getItems,
+  updateItem,
+  createItem,
+  deleteItem,
+  likeItem,
+  dislikeItem,
+};
