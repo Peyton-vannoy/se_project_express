@@ -1,25 +1,41 @@
 const User = require("../models/user");
+const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
 //GET /users
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.status(200).send({ data: users }))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({
-        message: err.message || "Error: Couldn't find users. Please try again.",
-      });
+      return res
+        .status(ERROR_CODES.INTERNAL_SERVER_ERROR)
+        .send({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     });
 };
 
 //GET /usersId
 const getUser = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => res.status(200).send(user))
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail()
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       console.log(err);
-      return res.status(500).send({
-        message: err.message || "Error: Couldn't find user. Please try again.",
+
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(ERROR_CODES.NOT_FOUND).send({
+          message: ERROR_MESSAGES.NOT_FOUND,
+        });
+      }
+
+      if (err.name === "CastError") {
+        return res.status(ERROR_CODES.BAD_REQUEST).send({
+          message: ERROR_MESSAGES.BAD_REQUEST,
+        });
+      }
+
+      return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
+        message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       });
     });
 };
@@ -29,13 +45,18 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
-      console.log(err);
-      return res.status(500).send({
-        message:
-          err.message || "Error: Couldn't create new user. Please try again.",
-      });
+      console.error(err);
+      if (err.name === "ValidationError") {
+        res.status(ERROR_CODES.BAD_REQUEST).send({
+          message: ERROR_MESSAGES.BAD_REQUEST,
+        });
+      } else {
+        res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
+          message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+        });
+      }
     });
 };
 
