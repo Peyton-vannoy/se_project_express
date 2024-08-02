@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 
-const { UNAUTHORIZED_ERROR_CODE } = require("../utils/errors");
+const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
-module.exports = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return res.status(UNAUTHORIZED_ERROR_CODE).send({
-      message: "Not authorized",
+    return res.status(ERROR_CODES.UNAUTHORIZED).send({
+      message: ERROR_MESSAGES.UNAUTHORIZED,
     });
   }
 
@@ -20,12 +20,13 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     console.error(err);
-    return res.status(UNAUTHORIZED_ERROR_CODE).send({
-      message: "Not authorized",
+    return res.status(ERROR_CODES.UNAUTHORIZED).send({
+      message: ERROR_MESSAGES.UNAUTHORIZED,
     });
   }
 
   req.user = payload;
-
   next();
 };
+
+module.exports = { authMiddleware };

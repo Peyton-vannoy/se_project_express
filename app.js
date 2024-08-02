@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
+const { authMiddleware } = require("./middlewares/auth");
+const cors = require("cors");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -11,11 +13,18 @@ mongoose
   .catch();
 
 app.use((req, res, next) => {
-  req.user = {
-    _id: "669d19bf0aa562d746d3a9b4",
-  };
-  next();
+  if (
+    req.path === "/signin" ||
+    req.path === "/signup" ||
+    req.path === "/items"
+  ) {
+    return next();
+  }
+  authMiddleware(req, res, next);
 });
+
+app.use(cors());
+
 app.use(express.json());
 app.use("/", indexRouter);
 

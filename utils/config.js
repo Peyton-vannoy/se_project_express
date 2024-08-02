@@ -1,2 +1,1 @@
-const JWT_SECRET = "some-secret-key";
-const JWT_EXPIRES_IN = "7d";
+const JWT_SECRET = "the-most-secret-key";

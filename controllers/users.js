@@ -1,42 +1,40 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const { JWT_SECRET } = require("../utils/config");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const bcrypt = require("bcrypt");
 
-// GET /users
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send({ data: users }))
-    .catch(() =>
-      res
-        .catch(() =>
-          res
-            .status(ERROR_CODES.INTERNAL_SERVER_ERROR)
-            .send({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR })
-        )
-        .send({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR })
-    );
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      return res.send({ token });
+    })
+    .catch((err) => {
+      res.status(ERROR_CODES.UNAUTHORIZED).send({
+        message: ERROR_MESSAGES.INVALID_CREDENTIALS,
+      });
+    });
 };
 
-// GET /usersId
-const getUser = (req, res) => {
-  const { userId } = req.params;
+const getCurrentUser = (req, res) => {
+  const userId = req.user._id;
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
+    .then((user) => {
+      if (!user) {
         return res.status(ERROR_CODES.NOT_FOUND).send({
-          message: ERROR_MESSAGES.NOT_FOUND,
+          message: ERROR_MESSAGES.USER_NOT_FOUND,
         });
       }
-
-      if (err.name === "CastError") {
-        return res.status(ERROR_CODES.BAD_REQUEST).send({
-          message: ERROR_MESSAGES.BAD_REQUEST,
-        });
-      }
-
-      return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
+      res.status(200).send({ data: user });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       });
     });
@@ -53,6 +51,7 @@ const createUser = (req, res) => {
   }
 
   return User.findOne({ email })
+    .select("+password")
     .then((existingEmail) => {
       if (existingEmail) {
         const error = new Error(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
@@ -77,7 +76,7 @@ const createUser = (req, res) => {
     .catch((err) => {
       if (err.code === 11000) {
         return res.status(ERROR_CODES.CONFLICT).send({
-          message: ERROR_MESSAGES.CONFLICT,
+          message: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS,
         });
       }
       if (err.name === "ValidationError") {
@@ -91,4 +90,35 @@ const createUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getUser, createUser };
+//PATCH /users/me
+const updateUserProfile = (req, res) => {
+  const userId = req.user._id;
+  const { name, avatar } = req.body;
+
+  User.findByIdAndUpdate(
+    userId,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .orFail()
+    .then((updatedUser) => {
+      if (!updatedUser) {
+        return res.status(ERROR_CODES.NOT_FOUND).send({
+          message: ERROR_MESSAGES.USER_NOT_FOUND,
+        });
+      }
+      return res.status(200).send({ data: updatedUser });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(ERROR_CODES.BAD_REQUEST).send({
+          message: ERROR_MESSAGES.BAD_REQUEST,
+        });
+      }
+      return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
+        message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+      });
+    });
+};
+
+module.exports = { getCurrentUser, createUser, login, updateUserProfile };
