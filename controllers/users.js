@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const bcrypt = require("bcrypt");
 
@@ -8,7 +9,11 @@ const getUsers = (req, res) => {
     .then((users) => res.status(200).send({ data: users }))
     .catch(() =>
       res
+    .catch(() =>
+      res
         .status(ERROR_CODES.INTERNAL_SERVER_ERROR)
+        .send({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR })
+    );
         .send({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR })
     );
 };
