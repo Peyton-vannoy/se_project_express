@@ -29,15 +29,13 @@ const login = (req, res) => {
 
 const getCurrentUser = (req, res) => {
   const userId = req.user._id;
-  console.log("[getCurrentUser] User ID: ", userId); // Add console.log statement for debugging
+
   User.findById(userId)
     .orFail()
     .then((user) => {
-      console.log("[getCurrentUser] User found:", user); // Add console.log statement for debugging
       res.send({ data: user });
     })
     .catch((err) => {
-      console.error("[getCurrentUser] Error:", err); // Add console.log statement for debugging
       if (err.name === "CastError") {
         return res.status(ERROR_CODES.BAD_REQUEST).send({
           message: ERROR_MESSAGES.BAD_REQUEST,
@@ -45,7 +43,7 @@ const getCurrentUser = (req, res) => {
       }
       if (err.name === "DocumentNotFoundError") {
         return res.status(ERROR_CODES.NOT_FOUND).send({
-          message: ERROR_MESSAGES.USER_NOT_FOUND,
+          message: ERROR_MESSAGES.NOT_FOUND,
         });
       }
       return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({

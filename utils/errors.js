@@ -9,7 +9,7 @@ const ERROR_CODES = {
 
 const ERROR_MESSAGES = {
   BAD_REQUEST: "Invalid data.",
-  USER_NOT_FOUND: "User not found.",
+  NOT_FOUND: "couldnt find the requested resource.",
   FORBIDDEN: "Access denied.",
   INTERNAL_SERVER_ERROR: "An error has occurred on the server.",
   EMAIL_ALREADY_EXISTS: "This email is already registered.",

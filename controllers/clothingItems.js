@@ -85,13 +85,16 @@ const likeItem = (req, res) => {
       if (err.name === "CastError") {
         return res
           .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: "Bad request" });
+          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
       }
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(ERROR_CODES.NOT_FOUND)
           .send({ message: ERROR_MESSAGES.NOT_FOUND });
       }
+
+      console.log("Error name:", err.name);
+
       return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       });
