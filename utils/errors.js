@@ -15,6 +15,7 @@ const ERROR_MESSAGES = {
   EMAIL_ALREADY_EXISTS: "This email is already registered.",
   CONFLICT: "Data already exists.",
   INVALID_CREDENTIALS: "Invalid email or password.",
+  UNAUTHORIZED: "Authorization required.",
 };
 
 module.exports = { ERROR_CODES, ERROR_MESSAGES };

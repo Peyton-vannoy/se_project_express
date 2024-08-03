@@ -81,10 +81,11 @@ const likeItem = (req, res) => {
     .orFail()
     .then((item) => res.json({ data: item }))
     .catch((err) => {
+      console.error(err);
       if (err.name === "CastError") {
         return res
           .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+          .send({ message: "Bad request" });
       }
       if (err.name === "DocumentNotFoundError") {
         return res

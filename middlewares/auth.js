@@ -3,7 +3,7 @@ const { JWT_SECRET } = require("../utils/config");
 
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
-const authMiddleware = (req, res, next) => {
+const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
@@ -26,7 +26,7 @@ const authMiddleware = (req, res, next) => {
   }
 
   req.user = payload;
-  next();
+  return next();
 };
 
-module.exports = { authMiddleware };
+module.exports = { auth };
