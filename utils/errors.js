@@ -14,7 +14,6 @@ const ERROR_MESSAGES = {
   INTERNAL_SERVER_ERROR: "An error has occurred on the server.",
   EMAIL_ALREADY_EXISTS: "This email is already registered.",
   CONFLICT: "Data already exists.",
-  INVALID_CREDENTIALS: "Invalid email or password.",
   UNAUTHORIZED: "Authorization required.",
 };
 

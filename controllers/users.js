@@ -21,8 +21,13 @@ const login = (req, res) => {
       return res.send({ token });
     })
     .catch((err) => {
-      res.status(ERROR_CODES.UNAUTHORIZED).send({
-        message: ERROR_MESSAGES.INVALID_CREDENTIALS,
+      if (err.message === "Incorrect email or password") {
+        return res.status(ERROR_CODES.UNAUTHORIZED).send({
+          message: "Incorrect email or password",
+        });
+      }
+      return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
+        message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       });
     });
 };
@@ -116,7 +121,7 @@ const updateUserProfile = (req, res) => {
           message: ERROR_MESSAGES.USER_NOT_FOUND,
         });
       }
-      return res.status(200).send({ data: updatedUser });
+      return res.send({ data: updatedUser });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {

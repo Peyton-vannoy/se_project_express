@@ -3,7 +3,7 @@ const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send({ data: items }))
+    .then((items) => res.send({ data: items }))
     .catch(() =>
       res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -112,7 +112,7 @@ const dislikeItem = (req, res) => {
     }
   )
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => res.send({ data: item }))
     .catch((err) => {
       if (err.name === "CastError") {
         return res
