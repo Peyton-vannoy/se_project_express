@@ -81,7 +81,6 @@ const likeItem = (req, res) => {
     .orFail()
     .then((item) => res.json({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
         return res
           .status(ERROR_CODES.BAD_REQUEST)
@@ -92,8 +91,6 @@ const likeItem = (req, res) => {
           .status(ERROR_CODES.NOT_FOUND)
           .send({ message: ERROR_MESSAGES.NOT_FOUND });
       }
-
-      console.log("Error name:", err.name);
 
       return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
         message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,

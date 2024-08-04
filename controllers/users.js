@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
-const bcrypt = require("bcrypt");
 
 const login = (req, res) => {
   const { email, password } = req.body;
@@ -88,7 +88,7 @@ const createUser = (req, res) => {
         .send({ name: user.name, email: user.email, avatar: user.avatar })
     )
     .catch((err) => {
-      if (err.code === 11000) {
+      if (err.message === "Email already exists") {
         return res.status(ERROR_CODES.CONFLICT).send({
           message: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS,
         });
@@ -104,7 +104,7 @@ const createUser = (req, res) => {
     });
 };
 
-//PATCH /users/me
+// PATCH
 const updateUserProfile = (req, res) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
