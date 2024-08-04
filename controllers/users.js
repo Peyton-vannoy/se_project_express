@@ -65,9 +65,7 @@ const createUser = (req, res) => {
   return User.findOne({ email })
     .then((existingEmail) => {
       if (existingEmail) {
-        const error = new Error(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
-        error.code = 11000;
-        throw error;
+        throw new Error("Email already exists");
       }
       return bcrypt.hash(password, 10);
     })
