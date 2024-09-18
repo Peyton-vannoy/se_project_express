@@ -1,8 +1,9 @@
-const ClothingItem = require("../models/clothingItem");
+const clothingItem = require("../models/clothingItem");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
 const getItems = (req, res) => {
-  ClothingItem.find({})
+  clothingItem
+    .find({})
     .then((items) => res.send({ data: items }))
     .catch(() =>
       res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({
@@ -21,8 +22,9 @@ const createItem = (req, res) => {
       .send({ message: ERROR_MESSAGES.BAD_REQUEST });
   }
 
-  return ClothingItem.create({ name, weather, imageUrl, owner })
-    .then((item) => res.status(201).send({ data: item }))
+  return clothingItem
+    .create({ name, weather, imageUrl, owner })
+    .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(ERROR_CODES.BAD_REQUEST).send({
@@ -39,7 +41,8 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
-  ClothingItem.findById(itemId)
+  clothingItem
+    .findById(itemId)
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
@@ -47,9 +50,11 @@ const deleteItem = (req, res) => {
           .status(ERROR_CODES.FORBIDDEN)
           .send({ message: ERROR_MESSAGES.FORBIDDEN });
       }
-      return ClothingItem.findByIdAndDelete(itemId).then(() =>
-        res.status(200).send({ message: "Successfully deleted item" })
-      );
+      return clothingItem
+        .findByIdAndDelete(itemId)
+        .then(() =>
+          res.status(200).send({ message: "Successfully deleted item" })
+        );
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -69,15 +74,16 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
-    {
-      $addToSet: { likes: req.user._id },
-    },
-    {
-      new: true,
-    }
-  )
+  clothingItem
+    .findByIdAndUpdate(
+      req.params.itemId,
+      {
+        $addToSet: { likes: req.user._id },
+      },
+      {
+        new: true,
+      }
+    )
     .orFail()
     .then((item) => res.json({ data: item }))
     .catch((err) => {
@@ -99,15 +105,16 @@ const likeItem = (req, res) => {
 };
 
 const dislikeItem = (req, res) => {
-  ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
-    {
-      $pull: { likes: req.user._id },
-    },
-    {
-      new: true,
-    }
-  )
+  clothingItem
+    .findByIdAndUpdate(
+      req.params.itemId,
+      {
+        $pull: { likes: req.user._id },
+      },
+      {
+        new: true,
+      }
+    )
     .orFail()
     .then((item) => res.send({ data: item }))
     .catch((err) => {
