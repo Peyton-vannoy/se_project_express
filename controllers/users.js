@@ -18,7 +18,7 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.send({ token });
+      return res.send({ token, name: user.name, avatar: user.avatar, email: user.email });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
@@ -116,12 +116,7 @@ const updateUserProfile = (req, res) => {
   )
     .orFail()
     .then((updatedUser) => {
-      if (!updatedUser) {
-        return res.status(ERROR_CODES.NOT_FOUND).send({
-          message: ERROR_MESSAGES.USER_NOT_FOUND,
-        });
-      }
-      return res.send({ data: updatedUser });
+      res.send({ data: updatedUser });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
