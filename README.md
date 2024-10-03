@@ -1,24 +1,83 @@
-# WTWR (What to Wear?): Back End
+# WTWR (What to Wear?)
 
-This project is a server for the WTWR (What to Wear?) application. It uses the Express.js framework and the Mongoose library to interact with a MongoDB database. The server handles HTTP requests and responses, and includes controllers for handling different routes.
+## Overview
+
+WTWR (What to Wear?) is a dynamic application designed to help users choose their outfits based on various factors like weather, occasion, and personal style. This back-end server, built with Express.js and Mongoose, seamlessly interacts with a MongoDB database to manage clothing items and user preferences.
+
+## Table of Contents
+
+- [Project Details](#project-details)
+- [Technologies Used](#technologies-used)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
 
 ## Project Details
 
-The project includes functions for retrieving all clothing items from the database, creating a new clothing item, and deleting a specific item.
+The server handles HTTP requests and responses, providing functionalities such as:
+
+- Retrieving all clothing items from the database
+- Creating new clothing items
+- Deleting specific items
 
 ## Technologies Used
 
-- Express.js
-- Mongoose
-- Node.js
-- MongoDB
+- **Express.js**: Web framework for Node.js
+- **Mongoose**: ODM for MongoDB
+- **Node.js**: JavaScript runtime
+- **MongoDB**: NoSQL database
 
-## Running the Project
+## Features
 
-`npm run start` — to launch the server
+- **CRUD Operations**: Create, Read, Update, and Delete clothing items.
+- **User Authentication**: Secure user accounts and preferences.
+- **Responsive Design**: Optimized for various devices.
 
-`npm run dev` — to launch the server with the hot reload feature
+## Installation
 
-### Testing
+To get started with the WTWR back end, follow these steps:
 
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/wtwr-backend.git
+   cd wtwr-backend
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Set up your MongoDB database and update the connection string in the `.env` file.
+
+4. Start the server:
+
+   ```bash
+   npm run start
+   ```
+
+5. For development with hot reload:
+   ```bash
+   npm run dev
+   ```
+
+## Usage
+
+Once the server is running, you can interact with the API using tools like Postman or cURL. Here are some example endpoints:
+
+- **Get all clothing items**: `GET /api/clothing`
+- **Create a new clothing item**: `POST /api/clothing`
+- **Delete a clothing item**: `DELETE /api/clothing/:id`
+
+## Contact
+
+For questions or feedback, reach out to:
+
+- **Peyton Vannoy**: [vannoypeyton819@gmail.com](mailto:vannoypeyton819@gmail.com)
+- **GitHub**: [Peyton-vannoy](https://github.com/Peyton-vannoy)
+
+---
+
+Thank you for checking out WTWR! I hope you find it useful and enjoyable!
