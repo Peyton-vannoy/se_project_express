@@ -2,15 +2,15 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const indexRouter = require("./routes/index");
-const {errors} = require("celebrate");
-const {errorHandler} = require("./middlewares/error-handler");
+const { errors } = require("celebrate");
+const { errorHandler } = require("./middlewares/error-handler");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 // Port
 const { PORT = 3001 } = process.env;
 
 // Initialize the app
 const app = express();
-
 
 // Connect to MongoDB
 mongoose
@@ -22,12 +22,18 @@ mongoose
     console.error("Error connecting to MongoDB:", err);
   });
 
-  // Middleware
+// Middleware
 app.use(express.json());
 app.use(cors());
 
+// RequestLogger
+app.use(requestLogger); // enable requestLogger before Route handlers
+
 // Routes
 app.use("/", indexRouter);
+
+// ErrorLogger
+app.use(errorLogger); // enable errorLogger after Routes but before error handling
 
 // Error handling
 app.use(errors());
