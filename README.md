@@ -1,5 +1,7 @@
 # WTWR (What to Wear?)
 
+Domain name: [https://wtwr.ohbah.com](https://wtwr.ohbah.com)
+
 ## Overview
 
 WTWR (What to Wear?) is a dynamic application designed to help users choose their outfits based on various factors like weather, occasion, and personal style. This back-end server, built with Express.js and Mongoose, seamlessly interacts with a MongoDB database to manage clothing items and user preferences.
@@ -65,7 +67,7 @@ To get started with the WTWR back end, follow these steps:
 
 ## Usage
 
-Once the server is running, you can interact with the API using tools like Postman or cURL. Here are some example endpoints:
+Once the server is running, you can interact with the API using tools like Postman or curl. Here are some example endpoints:
 
 - **Get all clothing items**: `GET /api/clothing`
 - **Create a new clothing item**: `POST /api/clothing`
