@@ -63,22 +63,20 @@ const validateAuthentication = celebrate({
   }),
 });
 
-// Id validation
-const validateId = celebrate({
-  params: Joi.object()
-    .keys({
-      id: Joi.string().required().hex().length(24).messages({
-        "string.empty": 'the "id" field must be filled in',
-        "string.hex": 'the "id" field must be a hexadecimal string',
-        "string.length": 'the "id" field must be 24 characters long',
-      }),
-    })
-    .unknown(true),
+// itemId validation
+const validateItemId = celebrate({
+  params: Joi.object().keys({
+    itemId: Joi.string().required().hex().length(24).messages({
+      "string.empty": 'the "id" field must be filled in',
+      "string.hex": 'the "id" field must be a hexadecimal string',
+      "string.length": 'the "id" field must be 24 characters long',
+    }),
+  }),
 });
 
 module.exports = {
   validateClothingItem,
   validateUser,
   validateAuthentication,
-  validateId,
+  validateItemId,
 };

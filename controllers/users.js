@@ -2,7 +2,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
-const { BadRequestError, UnauthorizedError, NotFoundError, ConflictError } = require("../utils/errors");
+const {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+  ConflictError,
+} = require("../utils/errors");
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -16,7 +21,13 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.send({ token, name: user.name, avatar: user.avatar, email: user.email, _id: user._id });
+      return res.send({
+        token,
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
@@ -51,7 +62,7 @@ const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   if (!email) {
-    next(new BadRequestError('An email address is required'))
+    next(new BadRequestError("An email address is required"));
   }
 
   return User.findOne({ email })
@@ -74,7 +85,13 @@ const createUser = (req, res, next) => {
         .status(201)
         .send({ name: user.name, email: user.email, avatar: user.avatar })
     )
-    .catch(next);
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(new BadRequestError("Invalid user data"));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // PATCH
@@ -98,7 +115,6 @@ const updateUserProfile = (req, res, next) => {
         next(err);
       }
     });
-  };
-
+};
 
 module.exports = { getCurrentUser, createUser, login, updateUserProfile };
