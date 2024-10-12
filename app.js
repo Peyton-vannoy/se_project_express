@@ -3,8 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const helmet = require("helmet");
-const limiter = require("./middlewares/rate-limiter");
 const { errors } = require("celebrate");
 const indexRouter = require("./routes/index");
 const { errorHandler } = require("./middlewares/error-handler");
@@ -27,10 +25,8 @@ mongoose
   });
 
 // Middleware
-app.use(helmet());
 app.use(express.json());
 app.use(cors());
-app.use(limiter);
 
 // RequestLogger
 app.use(requestLogger); // enable requestLogger before Route handlers
