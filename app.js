@@ -27,7 +27,7 @@ mongoose
   });
 
 // Middleware
-// app.use(helmet());
+app.use(helmet());
 app.use(express.json());
 app.use(
   cors({
@@ -37,7 +37,7 @@ app.use(
     credentials: true,
   })
 );
-// app.use(limiter);
+app.use(limiter);
 
 // RequestLogger
 app.use(requestLogger); // enable requestLogger before Route handlers
