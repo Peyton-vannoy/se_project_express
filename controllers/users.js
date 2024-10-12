@@ -3,8 +3,9 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 const BadRequestError = require("../utils/badRequestError");
-const UnauthorizedError = require("../utils/UnauthorizedError");
-const NotFoundError = require("../utils/NotFoundError");
+const UnauthorizedError = require("../utils/unauthorizedError");
+const NotFoundError = require("../utils/notFoundError");
+const ConflictError = require("../utils/conflictError");
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
