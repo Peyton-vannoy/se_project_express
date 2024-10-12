@@ -25,7 +25,12 @@ mongoose
 // Middleware
 app.use(helmet());
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://wtwr.ohbah.com", "http://localhost:3000"],
+    credentials: true,
+  })
+);
 app.use(limiter);
 
 // RequestLogger
