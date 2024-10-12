@@ -27,12 +27,8 @@ app.use(helmet());
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "https://wtwr.ohbah.com",
-      "http://localhost:3000",
-      "https://api.wtwr.ohbah.com/items",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: ["https://wtwr.ohbah.com", "http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
@@ -42,15 +38,15 @@ app.use(limiter);
 // RequestLogger
 app.use(requestLogger); // enable requestLogger before Route handlers
 
+// Routes
+app.use("/", indexRouter);
+
 // Crash Test
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
 });
-
-// Routes
-app.use("/", indexRouter);
 
 // ErrorLogger
 app.use(errorLogger); // enable errorLogger after Routes but before error handling
