@@ -1,5 +1,7 @@
 const { celebrate, Joi } = require("celebrate");
 const validator = require("validator");
+
+// Validation for URL
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
