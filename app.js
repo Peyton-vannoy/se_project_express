@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+const { errors } = require("celebrate");
 const helmet = require("helmet");
 const limiter = require("./middlewares/rate-limiter");
-const { errors } = require("celebrate");
 const indexRouter = require("./routes/index");
 const { errorHandler } = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
@@ -19,12 +19,8 @@ const app = express();
 // Connect to MongoDB
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB:", err);
-  });
+  .then(() => {})
+  .catch(() => {});
 
 // Middleware
 app.use(helmet());
@@ -53,6 +49,4 @@ app.use(errors());
 app.use(errorHandler);
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => {});
