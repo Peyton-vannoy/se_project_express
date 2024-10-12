@@ -1,4 +1,4 @@
-const { Joi } = require("celebrate");
+const { celebrate, Joi } = require("celebrate");
 const validator = require("validator");
 
 const validateURL = (value, helpers) => {
@@ -9,7 +9,7 @@ const validateURL = (value, helpers) => {
 };
 
 // Validation
-const validateClothingItem = {
+const validateClothingItem = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
       "string.empty": 'the "name" field must be filled in',
@@ -26,10 +26,10 @@ const validateClothingItem = {
       "string.uri": "You must enter a valid URL",
     }),
   }),
-};
+});
 
 // User validation
-const validateUser = {
+const validateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
       "string.empty": 'the "name" field must be filled in',
@@ -48,10 +48,10 @@ const validateUser = {
       "string.empty": 'the "password" field must be filled in',
     }),
   }),
-};
+});
 
 // Authentication validation
-const validateAuthentication = {
+const validateAuthentication = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email().messages({
       "string.empty": 'the "email" field must be filled in',
@@ -61,10 +61,10 @@ const validateAuthentication = {
       "string.empty": 'the "password" field must be filled in',
     }),
   }),
-};
+});
 
 // itemId validation
-const validateItemId = {
+const validateItemId = celebrate({
   params: Joi.object().keys({
     itemId: Joi.string().required().hex().length(24).messages({
       "string.empty": 'the "id" field must be filled in',
@@ -72,7 +72,7 @@ const validateItemId = {
       "string.length": 'the "id" field must be 24 characters long',
     }),
   }),
-};
+});
 
 module.exports = {
   validateClothingItem,

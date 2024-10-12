@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const { errors } = require("celebrate");
 const helmet = require("helmet");
 const limiter = require("./middlewares/rate-limiter");
+const { errors } = require("celebrate");
 const indexRouter = require("./routes/index");
 const { errorHandler } = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
@@ -29,21 +29,11 @@ mongoose
 // Middleware
 app.use(helmet());
 app.use(express.json());
-app.use(
-  cors({
-    origin: ["https://wtwr.ohbah.com", "http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(limiter);
 
 // RequestLogger
 app.use(requestLogger); // enable requestLogger before Route handlers
-
-// Routes
-app.use("/", indexRouter);
 
 // Crash Test
 app.get("/crash-test", () => {
@@ -51,6 +41,9 @@ app.get("/crash-test", () => {
     throw new Error("Server will crash now");
   }, 0);
 });
+
+// Routes
+app.use("/", indexRouter);
 
 // ErrorLogger
 app.use(errorLogger); // enable errorLogger after Routes but before error handling
@@ -60,4 +53,6 @@ app.use(errors());
 app.use(errorHandler);
 
 // Start the server
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
