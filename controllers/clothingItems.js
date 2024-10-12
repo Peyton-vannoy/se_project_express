@@ -21,10 +21,9 @@ const createItem = (req, res, next) => {
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Invalid data"));
-      } else {
-        return next(err);
+        return next(new BadRequestError("Invalid data"));
       }
+      return next(err);
     });
 };
 
@@ -48,10 +47,9 @@ const deleteItem = (req, res, next) => {
       if (err.name === "CastError") {
         next(new BadRequestError("Invalid item ID"));
       } else if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Item not found"));
-      } else {
-        return next(err);
+        return next(new NotFoundError("Item not found"));
       }
+      return next(err);
     });
 };
 
