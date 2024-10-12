@@ -1,11 +1,10 @@
-const clothingItem = require("../models/clothingItem");
+const ClothingItem = require("../models/clothingItem");
 const BadRequestError = require("../utils/BadRequestError");
 const ForbiddenError = require("../utils/ForbiddenError");
 const NotFoundError = require("../utils/NotFoundError");
 
 const getItems = (req, res, next) => {
-  clothingItem
-    .find({})
+  ClothingItem.find({})
     .then((items) => res.send({ data: items }))
     .catch(next);
 };
@@ -18,14 +17,13 @@ const createItem = (req, res, next) => {
     next(new BadRequestError("Invalid data"));
   }
 
-  return clothingItem
-    .create({ name, weather, imageUrl, owner })
+  return ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(new BadRequestError("Invalid data"));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
@@ -34,8 +32,7 @@ const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
-  clothingItem
-    .findById(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
@@ -43,11 +40,9 @@ const deleteItem = (req, res, next) => {
           "You do not have permission to delete this item"
         );
       }
-      return clothingItem
-        .findByIdAndDelete(itemId)
-        .then(() =>
-          res.status(200).send({ message: "Successfully deleted item" })
-        );
+      return ClothingItem.findByIdAndDelete(itemId).then(() =>
+        res.status(200).send({ message: "Successfully deleted item" })
+      );
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -55,22 +50,21 @@ const deleteItem = (req, res, next) => {
       } else if (err.name === "DocumentNotFoundError") {
         next(new NotFoundError("Item not found"));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
 
 const likeItem = (req, res, next) => {
-  clothingItem
-    .findByIdAndUpdate(
-      req.params.itemId,
-      {
-        $addToSet: { likes: req.user._id },
-      },
-      {
-        new: true,
-      }
-    )
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    {
+      $addToSet: { likes: req.user._id },
+    },
+    {
+      new: true,
+    }
+  )
     .orFail()
     .then((item) => {
       res.json({ data: item });
@@ -87,16 +81,15 @@ const likeItem = (req, res, next) => {
 };
 
 const dislikeItem = (req, res, next) => {
-  clothingItem
-    .findByIdAndUpdate(
-      req.params.itemId,
-      {
-        $pull: { likes: req.user._id },
-      },
-      {
-        new: true,
-      }
-    )
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    {
+      $pull: { likes: req.user._id },
+    },
+    {
+      new: true,
+    }
+  )
     .orFail()
     .then((item) => {
       res.send({ data: item });

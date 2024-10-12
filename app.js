@@ -33,7 +33,7 @@ app.use(
   cors({
     origin: [
       "https://wtwr.ohbah.com",
-      "https://api.wtwr.ohbah.com",
+      "https://api.wtwr.ohbah.com/items",
       "http://localhost:3000",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
