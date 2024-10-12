@@ -1,5 +1,7 @@
 const clothingItem = require("../models/clothingItem");
-const { BadRequestError, ForbiddenError, NotFoundError } = require("../utils/errors");
+const BadRequestError = require("../utils/badRequestError");
+const ForbiddenError = require("../utils/ForbiddenError");
+const NotFoundError = require("../utils/NotFoundError");
 
 const getItems = (req, res, next) => {
   clothingItem
@@ -37,7 +39,9 @@ const deleteItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
-        throw new ForbiddenError("You do not have permission to delete this item");
+        throw new ForbiddenError(
+          "You do not have permission to delete this item"
+        );
       }
       return clothingItem
         .findByIdAndDelete(itemId)
@@ -47,7 +51,7 @@ const deleteItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        next( new BadRequestError("Invalid item ID"));
+        next(new BadRequestError("Invalid item ID"));
       } else if (err.name === "DocumentNotFoundError") {
         next(new NotFoundError("Item not found"));
       } else {
