@@ -37,7 +37,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(limiter);
+// app.use(limiter);
 
 // RequestLogger
 app.use(requestLogger); // enable requestLogger before Route handlers
