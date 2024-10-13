@@ -29,7 +29,15 @@ mongoose
 // Middleware
 app.use(helmet());
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://wtwr.ohbah.com",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 app.use(limiter);
 
 // RequestLogger
