@@ -27,7 +27,7 @@ mongoose
   });
 
 // Middleware
-// app.use(helmet());
+app.use(helmet());
 app.use(express.json());
 app.use(
   cors({
