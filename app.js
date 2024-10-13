@@ -31,11 +31,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "https://wtwr.ohbah.com",
-      "https://api.wtwr.ohbah.com",
-      "http://localhost:3000",
-    ],
+    origin: "https://wtwr.ohbah.com",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
